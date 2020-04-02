@@ -1,2 +1,2 @@
-# COVID19-DB
-Import from github.com/pcm-dpc/COVID-19 the CSV files as tables into an Sqlite database.
+# COVID-19 ITALY Database 
+Workflow Actions that daily import the CSV data files as tables into an Sqlite database from github.com/pcm-dpc/COVID-19.
