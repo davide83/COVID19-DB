@@ -1,0 +1,52 @@
+# This workflow will create and populate a new DB by a cron-job
+
+name: Create and populate a DB from CSV tables
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  schedule:
+    #####
+    # schedule.cron works only on the default branch
+    # (To prod) Every day at 18:35 CEST -> 16:35 UCT -> "30 16 * * *"
+    # (To prod) At 16:30 UCT in every month from February through July  -> "30 16 * 2-7 *"
+    - cron: "*/15 * * * *"  # (To test) Every 15 minutes "*/15 * * * *"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "update"
+  update:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    env:
+      DB_PATH: databases/sqlite/dpc-covid19-ita_db.sqlite3
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Install scripts dependency
+    - name: Install sqlite
+      run: sudo apt-get install sqlite3
+    - name: Install csvkit
+      run: |
+        sudo pip install csvkit
+    # Runs commands using the runners shell
+    - name: Run the db_build bash script
+      run: |
+        sh ./scripts/db_build.sh
+    - name: Run the db_populate bash script
+      run: |
+        sh ./scripts/db_populate.sh      
+    - name: Commit files  # transfer the new DB files back into the repository
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add ./databases/sqlite/dpc-covid19-ita_db.sqlite3
+        git commit -m "[GH Actions] Updating the repository's DB file in the databases/sqlite folder"
+    - name: Push changes  # push the output folder to your repo
+      uses: ad-m/github-push-action@master
+      with:
+        # /!\ Set your branch name /!\
+        branch: 'master'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
