@@ -8,9 +8,9 @@ on:
   schedule:
     #####
     # schedule.cron works only on the default branch
-    # (To prod) Every day at 18:35 CEST -> 16:35 UCT -> "30 16 * * *"
-    # (To prod) At 16:30 UCT in every month from February through July  -> "30 16 * 2-7 *"
-    - cron: "*/15 * * * *"  # (To test) Every 15 minutes "*/15 * * * *"
+    # (To prod) Every day at 18:45 CEST -> 16:45 UCT -> "45 16 * * *"
+    # (To prod) At At every 20th minute past every hour from 16 through 18 (UTC) in every month from April through July -> "*/20 16-18 * 4-7 *"
+    - cron: "*/20 16-18 * 4-7 *"  # (To test) Every 15 minutes "*/15 * * * *"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
